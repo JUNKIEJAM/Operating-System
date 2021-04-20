@@ -4,10 +4,11 @@ int main()
 {
     int n, i, j, k;
     float hit=0,m;
-    cout << "Enter number of frames: ";
-    cin >> n;
-    cout << "Enter number of processes: ";
+    cout << "Number of processes: ";
     cin >> m;
+
+    cout << "Number of frames: ";
+    cin >> n;
 
     vector<int> p(m);
     vector<int> hi(m);
@@ -102,6 +103,6 @@ int main()
  float ratio=hit/m;
 
          cout<<"Page Hit Ratio: "<<ratio<<endl;
-         cout<<"PAge Fault Ratio: "<<1-ratio<<endl;
+         cout<<"Page Fault Ratio: "<<1-ratio<<endl;
     return 0;
 }
