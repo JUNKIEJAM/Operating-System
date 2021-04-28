@@ -1,5 +1,6 @@
 #include<bits/stdc++.h>
 using namespace std;
+
 int main(){
     int i,j,k,n,m,sum=0,x,y,h;
     cout<<"Enter the size of disk\n";
