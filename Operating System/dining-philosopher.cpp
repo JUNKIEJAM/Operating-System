@@ -1,48 +1,114 @@
 #include <iostream>
-#include <mutex>
-#include <thread>
-
+#define n 5
 using namespace std;
+
+int compltedPhilo = 0, i;
+struct fork
+{
+    int taken;
+} ForkAvil[n];
+struct philosp
+{
+    int left;
+    int right;
+} Philostatus[n];
+
+void goForDinner(int philID)
+{ 
+    if (Philostatus[philID].left == 10 && Philostatus[philID].right == 10)
+        cout << "Philosopher " << philID + 1 << " completed his dinner\n";
+  
+    else if (Philostatus[philID].left == 1 && Philostatus[philID].right == 1)
+    {
+      
+        cout << "Philosopher " << philID + 1 << " completed his dinner\n";
+
+        Philostatus[philID].left = Philostatus[philID].right = 10; 
+        int otherFork = philID - 1;
+
+        if (otherFork == -1)
+            otherFork = (n - 1);
+
+        ForkAvil[philID].taken = ForkAvil[otherFork].taken = 0; 
+        cout << "Philosopher " << philID + 1 << " released fork " << philID + 1 << " and fork " << otherFork + 1 << "\n";
+        compltedPhilo++;
+    }
+    else if (Philostatus[philID].left == 1 && Philostatus[philID].right == 0)
+    { 
+        if (philID == (n - 1))
+        {
+            if (ForkAvil[philID].taken == 0)
+            { 
+                ForkAvil[philID].taken = Philostatus[philID].right = 1;
+                cout << "Fork " << philID + 1 << " taken by philosopher " << philID + 1 << "\n";
+            }
+            else
+            {
+                cout << "Philosopher " << philID + 1 << " is waiting for fork " << philID + 1 << "\n";
+            }
+        }
+        else
+        { 
+            int dupphilID = philID;
+            philID -= 1;
+
+            if (philID == -1)
+                philID = (n - 1);
+
+            if (ForkAvil[philID].taken == 0)
+            {
+                ForkAvil[philID].taken = Philostatus[dupphilID].right = 1;
+                cout << "Fork " << philID + 1 << " taken by Philosopher " << dupphilID + 1 << "\n";
+            }
+            else
+            {
+                cout << "Philosopher " << dupphilID + 1 << " is waiting for Fork " << philID + 1 << "\n";
+            }
+        }
+    }
+    else if (Philostatus[philID].left == 0)
+    { 
+        if (philID == (n - 1))
+        {
+            if (ForkAvil[philID - 1].taken == 0)
+            { 
+                ForkAvil[philID - 1].taken = Philostatus[philID].left = 1;
+                cout << "Fork " << philID << " taken by philosopher " << philID + 1 << "\n";
+            }
+            else
+            {
+                cout << "Philosopher " << philID + 1 << " is waiting for fork " << philID << "\n";
+            }
+        }
+        else
+        { 
+            if (ForkAvil[philID].taken == 0)
+            {
+                ForkAvil[philID].taken = Philostatus[philID].left = 1;
+                cout << "Fork " << philID + 1 << " taken by Philosopher " << philID + 1 << "\n";
+            }
+            else
+            {
+                cout << "Philosopher " << philID + 1 << " is waiting for Fork " << philID + 1 << "\n";
+            }
+        }
+    }
+    else
+    {
+    }
+}
 
 int main()
 {
-     int no_of_philosophers;
-     cout<<"Enter the number of philosophers: ";
-     cin >> no_of_philosophers;
+    for (i = 0; i < n; i++)
+        ForkAvil[i].taken = Philostatus[i].left = Philostatus[i].right = 0;
 
-         struct Chopstics
-     {
-     public:
-         Chopstics() { ; }
-         std::mutex mu;
-    };
-    
-    auto eat = [](Chopstics &left_chopstics, Chopstics& right_chopstics, int philosopher_number) {
-        
-        std::unique_lock<std::mutex> llock(left_chopstics.mu);
-        std::unique_lock<std::mutex> rlock(right_chopstics.mu);
-        
-        cout << "Philosopher " << philosopher_number << " is eating" << endl;
-        cout << "Philosopher " << philosopher_number << " has finished eating" << endl;
-    };
-    
-   
-    Chopstics chp[no_of_philosophers];
-    
-    std::thread philosopher[no_of_philosophers];
-    
-    
-    cout << "Philosopher "<<"1" <<" is reading.." << endl;
-    philosopher[0] = std::thread(eat, std::ref(chp[0]), std::ref(chp[no_of_philosophers-1]), (0+1));
-    
-    for(int i = 1; i < no_of_philosophers; ++i) {
-        cout << "Philosopher " << (i+1) << " is reading.." << endl;
-        philosopher[i] = std::thread(eat, std::ref(chp[i]), std::ref(chp[i-1]), (i+1));
+    while (compltedPhilo < n)
+    {
+        for (i = 0; i < n; i++)
+            goForDinner(i);
+        cout << "\nTill now num of philosophers completed dinner are " << compltedPhilo << "\n\n";
     }
-    
-    for(auto &ph: philosopher) {
-        ph.join();
-    }
-    
+
     return 0;
 }

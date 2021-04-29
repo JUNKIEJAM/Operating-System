@@ -1,106 +1,90 @@
-#include <bits/stdc++.h> 
-using namespace std; 
+#include <bits/stdc++.h>
+using namespace std;
 
-
-
-void findWaitingTime(int arrivaltime[], int bursttime[], int size,
-                     int wt[])
-{ 
-	int rt[size]; 
+int main()
+{
 	
-	for (int i = 0; i < size; i++) 
-		rt[i] = bursttime[i]; 
+	int p, i, j, sum = 0, min, index;
+	float awt = 0, atat = 0;
 
-	int complete = 0, t = 0, minm = INT_MAX; 
-	int shortest = 0, finish_time; 
-	bool check = false; 
+	cout << "\nEnter The Total Number of Process: ";
+	cin >> p;
 
-	while (complete != size) { 
+	int proc[p];
 
-	
-		for (int j = 0; j < size; j++) { 
-			if ((arrivaltime[j] <= t) && 
-			(rt[j] < minm) && rt[j] > 0) { 
-				minm = rt[j]; 
-				shortest = j; 
-				check = true; 
-			} 
-		} 
+	int *cbt = new int[p];
+	int *wt = new int[p];
+	int *gc = new int[p];
+	int *tat = new int[p];
+	int *tmp = new int[p];
 
-		if (check == false) { 
-			t++; 
-			continue; 
-		} 
+	cout << "\nEnter CBT of Process:\n";
 
-	
-		rt[shortest]--; 
+	for (i = 0; i < p; i++)
+	{
+		cin >> cbt[i];
+		tmp[i] = cbt[i];
+	}
 
-		
-		minm = rt[shortest]; 
-		if (minm == 0) 
-			minm = INT_MAX; 
+	sort(cbt, cbt + p);
 
-		if (rt[shortest] == 0) { 
-     		complete++; 
-			check = false; 
+	cout << "\n========================================================\n";
+	cout << "\t\tGantt. Chart";
+	cout << "\n========================================================\n";
 
-				finish_time = t + 1; 
+	for (j = 0; j <= p; j++)
+	{
+		min = 100;
+		for (i = 0; i < p; i++)
+		{
+			if (min > tmp[i] && tmp[i] != -1)
+			{
+				min = tmp[i];
+				index = i;
+			}
+		}
 
-		
-			wt[shortest] = finish_time - 
-						bursttime[shortest] - 
-						arrivaltime[shortest]; 
+		gc[j] = sum;
+		wt[j] = sum;
+		sum += tmp[index];
+		tat[j] = sum;
+		tmp[index] = -1;
 
-			if (wt[shortest] < 0) 
-				wt[shortest] = 0; 
-		} 
+		if (j == p)
+			break;
+		cout << 'P' << index + 1 << "  |  ";
+		proc[j] = index + 1;
+	}
 
-		t++; 
-	} 
+	cout << "\n--------------------------------------------------------\n";
+
+	sum = 0;
+
+	for (j = 0; j <= p; j++)
+	{
+		if (gc[j] < 10)
+			cout << 0;
+		cout << gc[j] << "    ";
+		sum += gc[j];
+	}
+
+	cout << endl;
+
+	atat = (sum * 1.0) / p;
+
+	cout << "\n--------------------------------------------------------";
+	cout << "\nProcess\t\tCBT\tWaiting Time\tTurn Around Time";
+	cout << "\n--------------------------------------------------------\n";
+
+	for (i = 0; i < p; i++)
+	{
+		cout << "P[" << proc[i] << "]\t\t" << cbt[i] << "\t" << wt[i] << "\t\t" << tat[i] << endl;
+		awt = awt + wt[i];
+	}
+	awt = (awt * 1.0) / p;
+
+	cout << "\n\nTotal Waiting Time: " << awt;
+	cout << "\n\nTotal Turn Around Time: " << atat << endl;
+
+	return 0;
 }
-
-void findavgTime(int arrivaltime[], int bursttime[], int size)
-{ 
-	int wt[size], total_wt = 0;
-	findWaitingTime(arrivaltime,bursttime,size, wt); 
-	cout << "Processes "
-		<< " Burst time "
-		<< " Waiting time"<<endl;
-	
-	for (int i = 0; i <size; i++) { 
-		total_wt = total_wt + wt[i]; 
-		cout << " " << i+1 << "\t\t"
-			<< bursttime[i] << "\t\t " << wt[i]<< endl; 
-	} 
-
-	cout << "\nAverage waiting time = "
-		<< (float)total_wt / (float)size; 
-
-} 
-
-int main() 
-{ 
-
-    int size;
-    cout<<"Enter the number of processes: ";
-    cin>>size;
-
-    int arrivaltime[size];
-
-    cout<<"Enter the arrival times: ";
-    for (int i = 0; i < size; i++)
-    {
-        cin >>arrivaltime[i];
-    }
-
-    int bursttime[size];
-    
-    cout<<"Enter the burst times: ";
-    for (int i = 0; i < size; i++)
-    {
-        cin >>bursttime[i];
-    }
-
-	findavgTime(arrivaltime,bursttime,size); 
-	return 0; 
-} 

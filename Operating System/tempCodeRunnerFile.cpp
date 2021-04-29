@@ -5,7 +5,7 @@ int main()
     int n, i, j, TEMP, TEMP1, TEMP2, TEMP3, TEMP4;
     float WTSUM = 0, TATSUM = 0;
     int bt[10], at[10], P[10], ct[10], tat[10], wt[10], pt[10];
-    cout << "No of processes:";
+    cout << "Enter the no of  processes:";
     cin >> n;
     for (i = 1; i <= n; i++)
     {
